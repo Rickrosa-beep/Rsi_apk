@@ -5,35 +5,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: android-actions/setup-android@v3
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Accept Licenses
-        run: yes | flutter doctor --android-licenses || true
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
       - name: Build APK
         run: |
-          pip install flet pandas websockets
-          # On ne crée PAS d'icône vide cette fois
-          # On build sans icône personnalisée pour éviter l'erreur RangeError
+          pip install flet pandas websockets matplotlib numpy
+          # On s'assure que les licences sont acceptées
+          yes | sdkmanager --licenses || true
+          yes | flutter doctor --android-licenses || true
+          # Lancement du build avec l'icône que nous avons créée
           flet build apk --project "RickAlgo"
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: RickAlgo-VIP
+          name: RickAlgo-VIP-Stylé
           path: build/apk/*.apk
