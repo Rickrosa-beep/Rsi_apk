@@ -18,19 +18,18 @@ jobs:
           channel: 'stable'
 
       - name: Accept Licenses
-        run: |
-          yes | flutter doctor --android-licenses || true
+        run: yes | flutter doctor --android-licenses || true
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies & Build
+      - name: Build APK
         run: |
           pip install flet pandas websockets
-          mkdir -p assets
-          touch assets/icon.png
+          # On ne crée PAS d'icône vide cette fois
+          # On build sans icône personnalisée pour éviter l'erreur RangeError
           flet build apk --project "RickAlgo"
 
       - name: Upload APK
